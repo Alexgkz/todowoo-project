@@ -1,0 +1,27 @@
+cd c:\Users\Professional\myDjangoFolder\todowoo-project\
+todowoo_venv\Scripts\activate.bat
+python manage.py runserver
+
+git add -A
+git commit -m "a p41.5, lesson 5.6(10min) new local setting"
+git push -u origin
+
+venv:
+python -m venv todowoo_venv
+
+
+1) создаю проект и папку
+django-admin startproject todowoo
+для создания виртуального окружения, перейдите в директорию своего проекта и выполните:
+python -m venv todowoo_venv
+активация окружения:
+
+todowoo_venv\Scripts\activate.bat      -для Windows;
+source todowoo_venv/bin/activate       -для Linux и MacOS.
+2)python manage.py startapp todo    добавл приложен(папку) блог
+приложениe todo добавляем в список INSTALLED_APPS файла Settings.py основного приложения
+3)python manage.py migrate  -выполним миграцию приложений
+теперь можем перезапустить сервер  python manage.py runserver
+4) git init
+git config --global user.email "alexgkz@mail.ru"
+git config --global user.name "Alexgkz"
