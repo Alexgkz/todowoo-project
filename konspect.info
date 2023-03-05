@@ -4,7 +4,7 @@ python manage.py runserver
 
 git add -A
 git commit -m "a p41.5, lesson 5.6(10min) new local setting"
-git push -u origin
+git push -u origin main
 
 venv:
 python -m venv todowoo_venv
@@ -23,5 +23,35 @@ source todowoo_venv/bin/activate       -для Linux и MacOS.
 3)python manage.py migrate  -выполним миграцию приложений
 теперь можем перезапустить сервер  python manage.py runserver
 4) git init
-git config --global user.email "alexgkz@mail.ru"
-git config --global user.name "Alexgkz"
+создаем репозит на github todowoo-project
+git remote add origin https://github.com/Alexgkz/todowoo-project.git
+git branch -M main
+git push -u origin main
+5) commit p4, les 6.2make todo (venv, git)
+Делаем страницу для регистрации на сайте:
+в файл urls.py todowoo добавить:
+from todo import views
+и в urlpatterns = [
+    # Auth
+    path('signup/', views.signupuser, name='signupuser'),   -страница для регистрации
+в файл todo/views.py добавим метод вывода страницы:
+      def signupuser(request):
+          return render (request, 'todo/signupuser.html')
+и создадим файл todo/TEMPLATES/todo/signupuser.html
+с одной строчкой "sign up" можно попробовать она отобразится http://127.0.0.1:8000/signup/
+5.1)в файл todo/views.py добавим встроенную функцию создания юзеров:
+      from django.contrib.auth.forms import UserCreationForm
+и добавим ', {'form':UserCreationForm()}' в возврат метода вывода страницы регистрации
+в файл todo/TEMPLATES/todo/signupuser.html вместо "sign up" вставим вывод формы страницы подготовленной
+в начале этого пункта 5.1:   {{ form.as_p }}
+можно попробовать как страница signup отобразится http://127.0.0.1:8000/signup/
+5.3) файл todo/TEMPLATES/todo/signupuser.html
+добавим заголовок и заключим нашу форму в тег form, чтобы была возможность указывать
+метод для нашей формы и добавим кнопку 'Sign UP', и строчку {% csrf_token %} для безопасности от взлома:
+        <h1>Sign UP</h1>
+
+        <<form  method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Sign UP</button>
+        </form>
