@@ -1,9 +1,9 @@
 cd c:\Users\Professional\myDjangoFolder\todowoo-project\
-todowoo_venv\Scripts\activate.bat
+todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "a p41.5, lesson 5.6(10min) new local setting"
+git commit -m "befor p7 lesson 6.6"
 git push -u origin main
 
 venv:
@@ -55,3 +55,47 @@ from todo import views
         {{ form.as_p }}
         <button type="submit">Sign UP</button>
         </form>
+6)commit p6 lesson 6.4     todo/views.py:
+    from django.shortcuts import render
+    from django.contrib.auth.forms import UserCreationForm
+    from django.contrib.auth.models import User                       # импорт модели User'а
+
+
+    def signupuser(request):
+        if requst.method == 'GET':                                  # при вызове через метод 'GET' (через urls.py  или строку в браузере)отобразится страница с запросом имени и паролей
+            return render (request, 'todo/signupuser.html', {'form':UserCreationForm()})
+        else:                                                        # при вызове через метод 'POST' (нажатие клавиши Sign UP) будут проверены равенство паролей и сохранятся имя юзера и его пароль в dbSQL
+            if requst.POST['password1'] == requst.POST['password2']:    #проверены равенство паролей
+                user = User.objects.create_user(requst.POST['username']), password=requst.POST['password1']                 # запись логин/пароль в переменную
+                user.save() # запись в dbSQL
+            else:
+                print('hello')
+                # будет обработка не одинаковых паролей
+  python manage.py createsuperuser          -создадим суперюзера log:alex Email address: alexgkz@mail.ru pas:xxxxx смена пароля python manage.py changepassword alex
+  6.1) в файл todo/views.py допишем для обработки ошибки ввода разных паролей в конец:
+  return render (request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})
+  где error - текст ошибки возвращающийся методом, далее в signupuser.html добавляем вывод ошибки:
+  <h2>{{ error }}</h2>
+  6.2) для обработки ошибки, что логин занят в файл todo/views.py допишем после if:
+  if request.POST['password1'] == request.POST['password2']: # проверка что пароли равны
+      try:
+          user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
+          user.save() #запись учетных данных в dbSql
+      except IntegrityError:      #исключение для ошибки "логин занят"
+          return render (request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':'That username has already been taken. Please chose a new username!'}) #вывод страницы регистрации с сообщ об ошибке login уже занят
+а также импортируем код ошибки вначале:
+      from django.db import IntegrityError
+
+    6.3) в файл todo/views.py допишем для регистрации польз на сайте и перехода на страницу currenttodos:
+      from django.shortcuts import render, redirect
+      from django.contrib.auth import login   # регистрация пользователя
+
+      login(request, user)     # регистрация пользователя с введенными уч. данными
+      return redirect('currenttodos') # редирект на страницу currenttodos
+в файл urls.py todowoo добавить для вывода страницы с текущими делами (currenttodos) юзера:
+        #Todos
+        path('current/', views.currenttodos, name='currenttodos'),
+
+        создадим файл todo/currenttodos.html для страницы currenttodos:
+        <h1>current</h1>
+7)commit befor p7 lesson 6.6

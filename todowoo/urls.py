@@ -24,5 +24,5 @@ urlpatterns = [
     path('signup/', views.signupuser, name='signupuser'),
 
     #Todos
-
+    path('current/', views.currenttodos, name='currenttodos'),
 ]
