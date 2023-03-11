@@ -14,7 +14,7 @@ def signupuser(request):        #страница с запросом имени
                 user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
                 user.save() #запись учетных данных в dbSql
                 login(request, user)     # регистрация пользователя с введенными уч. данными
-                return redirect('currenttodos') # редирект на страниу currenttodos
+                return redirect('currenttodos') # редирект на страницу currenttodos
 
 
             except IntegrityError:  #исключение для ошибки "логин занят"

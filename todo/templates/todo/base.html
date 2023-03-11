@@ -1,0 +1,17 @@
+<!-- # если юзер залогинен -->
+{% if user.is_authenticated %}
+<!-- # вывод имени юзера -->
+Logged In as {{ user.username }}
+<!-- # кнопка разлогинивания -->
+<a href="#">Logout</a>
+<!-- # если юзер не залогинен -->
+{% else %}
+<!-- # кнопка авторизации и кнопка регистрации -->
+<a href="#">Sign Up</a>
+<a href="#">Login</a>
+
+{% endif %}
+<br>
+<br>
+
+{% block content %}{% endblock %}

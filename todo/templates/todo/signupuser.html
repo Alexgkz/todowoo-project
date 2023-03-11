@@ -1,10 +1,17 @@
-<h1>Sign UP</h1>
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
 
-<!-- # вывод ошибки, если есть  -->
-<h2>{{ error }}</h2>
+{% block content %}
 
-<form  method="POST">
-  {% csrf_token %}
-{{ form.as_p }}
-<button type="submit">Sign UP</button>
-</form>
+  <h1>Sign UP</h1>
+
+  <!-- # вывод ошибки, если есть  -->
+  <h2>{{ error }}</h2>
+
+  <form  method="POST">
+    {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Sign UP</button>
+  </form>
+
+{% endblock %}

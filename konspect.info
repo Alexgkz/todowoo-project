@@ -3,8 +3,10 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p7 lesson 6.6"
+git commit -m "befor p8 lesson 6.7"
 git push -u origin main
+
+pip freeze - installed Package
 
 venv:
 python -m venv todowoo_venv
@@ -99,3 +101,36 @@ from todo import views
         создадим файл todo/currenttodos.html для страницы currenttodos:
         <h1>current</h1>
 7)commit befor p7 lesson 6.6
+Создаем Строку состояния что юзер sign up и кнопку sign off.
+создаем файл todo/TEMPLATES/todo/base.html:
+
+          <!-- # если юзер залогинен -->
+          {% if user.is_authenticated %}
+
+          <!-- # вывод имени юзера -->
+          Logged In as {{ user.username }}
+
+          <!-- # кнопка разлогинивания -->
+          <a href="#">Logout</a>
+
+          <!-- # если юзер не залогинен -->
+          {% else %}
+
+          <!-- # кнопка авторизации и кнопка регистрации -->
+          <a href="#">Sign Up</a>
+          <a href="#">Login</a>
+
+          {% endif %}
+
+          {% block content %}{% endblock %}
+правим файл todo/TEMPLATES/todo/currenttodos.html:
+          # show base.html with Code in Tag 'Block content'
+          {% extends 'todo/base.html' %}
+
+          {% block content %}
+
+          Current
+
+          {% endblock %}
+
+8)commit befor p8 lesson 6.7
