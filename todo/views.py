@@ -1,12 +1,22 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError   #для  сообщ об ошибке login уже занят
-from django.contrib.auth import login, logout   #
+from django.contrib.auth import login, logout, authenticate   #
 
 def home(request):
     return render (request, 'todo/home.html')
 
+def loginuser(request):
+    if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+        return render (request, 'todo/loginuser.html', {'form':AuthenticationForm()}) #отобразится страница с запросом имени и пароля
+    else:                   #при вызове через метод 'POST' (нажали кнопку login )
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])      # проверка есть ли пара login/password и передача их в user
+        if user is None:                #если логин пароль неверны повторн загрузка формы с выводом ошибки
+          return render (request, 'todo/loginuser.html', {'form':AuthenticationForm(), "error":'Username and password did not match'})
+        else:
+            login(request, user)     # login пользователя с введенными уч. данными
+            return redirect('currenttodos') # редирект на страницу currenttodos
 
 def signupuser(request):        #страница с запросом имени и паролей
     if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)

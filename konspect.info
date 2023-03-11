@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p8 lesson 6.7"
+git commit -m "befor p10 lesson 6.9 Заготовка сайта с полностью работающей регистрацией/аутентификацией"
 git push -u origin main
 
 pip freeze - installed Package
@@ -151,7 +151,7 @@ from todo import views
 
 
     в файл todo/views.py допишем
-          from django.contrib.auth import login, logout
+          from django.contrib.auth import logout
 
           def logoutuser(request):
               if request.method == 'POST':
@@ -179,3 +179,42 @@ from todo import views
         Home
 
       {% endblock %}
+
+9)commit befor p9 lesson 6.8
+реализация login пользователя:
+в файл todowoo/urls.py add:
+path('login/', views.loginuser, name='loginuser'),
+
+в файл todo/views.py допишем:
+          from django.contrib.auth.forms import AuthenticationForm
+          from django.contrib.auth import authenticate  # проверка есть ли пара login/password
+          def loginuser(request):
+              if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+                  return render (request, 'todo/loginuser.html', {'form':AuthenticationForm()}) #отобразится страница с запросом имени и пароля
+              else:                   #при вызове через метод 'POST' (нажали кнопку login )
+                  user = authenticate(request, username=request.POST['username'], password=request.POST['password'])   # проверка есть ли пара login/password и передача их в user
+                  if user is None: #если логин пароль неверны повторн загрузка формы с выводом ошибки
+                    return render (request, 'todo/loginuser.html', {'form':AuthenticationForm(), "error":'Username and password did not match'})
+                  else:
+                      login(request, user)     # login пользователя с введенными уч. данными
+                      return redirect('currenttodos') # редирект на страницу currenttodos
+создаем файл todo/TEMPLATES/todo/loginuser.html:
+    <!-- # show base.html with Code in Tag 'Block content' -->
+    {% extends 'todo/base.html' %}
+
+    {% block content %}
+
+      <h1>Login</h1>
+
+      <!-- # вывод ошибки, если есть  -->
+      <h2>{{ error }}</h2>
+
+      <form  method="POST">
+        {% csrf_token %}
+      {{ form.as_p }}    <!-- # форма djngo для запроса username и двух паролей   -->
+      <button type="submit">Login</button>
+      </form>
+
+    {% endblock %}
+
+10)commit befor p10 lesson 6.9

@@ -1,0 +1,17 @@
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+  <h1>Login</h1>
+
+  <!-- # вывод ошибки, если есть  -->
+  <h2>{{ error }}</h2>
+
+  <form  method="POST">
+    {% csrf_token %}
+  {{ form.as_p }}    <!-- # форма djngo для запроса username и двух паролей   -->
+  <button type="submit">Login</button>
+  </form>
+
+{% endblock %}

@@ -10,8 +10,8 @@ Logged In as {{ user.username }}
 <!-- # если юзер не залогинен -->
 {% else %}
 <!-- # кнопка авторизации и кнопка регистрации -->
-<a href="#">Sign Up</a>
-<a href="#">Login</a>
+<a href="{% url 'signupuser' %}">Sign Up</a>
+<a href="{% url 'loginuser' %}">Login</a>
 
 {% endif %}
 <br>
