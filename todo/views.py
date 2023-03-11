@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError   #для  сообщ об ошибке login уже занят
-from django.contrib.auth import login   #
+from django.contrib.auth import login, logout   #
+
+def home(request):
+    return render (request, 'todo/home.html')
 
 
 def signupuser(request):        #страница с запросом имени и паролей
@@ -21,6 +24,11 @@ def signupuser(request):        #страница с запросом имени
                 return render (request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':'That username has already been taken. Please chose a new username!'}) #вывод страницы регистрации с сообщ об ошибке login уже занят
         else:
             return render (request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})  #вывод страницы регистрации с сообщ об ошибке пароли не совпадают
+
+def logoutuser(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('home')
 
 def currenttodos(request):      #отобразится страница с текущими todos
     return render (request, 'todo/currenttodos.html') #отобразится страница с запросом имени и паролей

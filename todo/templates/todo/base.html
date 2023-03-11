@@ -3,7 +3,10 @@
 <!-- # вывод имени юзера -->
 Logged In as {{ user.username }}
 <!-- # кнопка разлогинивания -->
-<a href="#">Logout</a>
+<form action="{% url 'logoutuser' %}" method="POST">
+  {% csrf_token %}
+<button type="submit">Logout</button>
+</form>
 <!-- # если юзер не залогинен -->
 {% else %}
 <!-- # кнопка авторизации и кнопка регистрации -->

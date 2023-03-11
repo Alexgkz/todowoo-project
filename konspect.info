@@ -134,3 +134,48 @@ from todo import views
           {% endblock %}
 
 8)commit befor p8 lesson 6.7
+обработка нажат кнопки Logout и созд домашней страницы(home)
+в файл todowoo/urls.py add:
+        # Auth
+          path('logout/', views.logoutuser, name='logoutuser'),
+
+
+в файле todo/TEMPLATES/todo/base.html добавляем {% url 'logout' %} :
+переход по url это всегда метод 'GET':
+    <a href="{% url 'logoutuser' %}">Logout</a>     - это нам не подойдет, заменим на:
+
+<form action="{% url 'logoutuser' %}" method="POST">
+  {% csrf_token %}
+<button type="submit">Logout</button>
+</form>
+
+
+    в файл todo/views.py допишем
+          from django.contrib.auth import login, logout
+
+          def logoutuser(request):
+              if request.method == 'POST':
+                  logout(request)
+                  return redirect('home')     #перенаправление на домашнюю страницу
+переход по url это всегда метод 'GET', а по нажатию кнопки 'POST'. браузер кешуруя данные
+перейдет по ссылке и разлогинит пользователя, поэтому мы для предотвращения этого
+проверяем нажатие кнопки(метод 'POST' ). ЭТО НАДО ДЕЛАТЬ ВСЕГДА во избежание неправильной работы
+сайта.
+созд домашней страницы(home):
+в файл todowoo/urls.py add:
+        #Todos
+          path('', views.home, name='home'),
+
+в файл todo/views.py допишем:
+          def home(request):
+              return render (request, 'todo/home.html')
+
+создаем файл todo/TEMPLATES/todo/home.html:
+      <!-- # show base.html with Code in Tag 'Block content' -->
+      {% extends 'todo/base.html' %}
+
+      {% block content %}
+
+        Home
+
+      {% endblock %}
