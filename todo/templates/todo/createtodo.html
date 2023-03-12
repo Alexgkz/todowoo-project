@@ -1,0 +1,17 @@
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+  <h1>Create</h1>
+
+  <!-- # вывод ошибки, если есть  -->
+  <h2>{{ error }}</h2>
+
+  <form  method="POST">
+    {% csrf_token %}
+  {{ form.as_p }}    <!-- # форма djngo (ввод записей ТуДу) задается в views.py при вызове страницы в данном случае TodoForm(создана нами)   -->
+  <button type="submit">Create</button>
+  </form>
+
+{% endblock %}

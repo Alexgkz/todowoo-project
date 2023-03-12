@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError   #для  сообщ об ошибке login уже занят
 from django.contrib.auth import login, logout, authenticate   #
+from .forms import TodoForm  # импорт формы страницы создания записей из файла todo/forms.py
 
 def home(request):
     return render (request, 'todo/home.html')
@@ -39,6 +40,21 @@ def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+
+def createtodo(request):
+    if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+        return render (request, 'todo/createtodo.html', {'form':TodoForm()}) #отобразится страница с формой TodoForm() описанной в файле todo/forms.py
+    else:   #по нажатию кнопки Create
+        try:
+            form = TodoForm(request.POST) #все заполнные данные в форме TodoForm
+            newtodo = form.save(commit=False)   # записываются в dbDjango
+            newtodo.user = request.user     # выполняется привязка данных к пользователю
+            newtodo.save()  # и тоже записываются в dbDjango
+            return redirect('currenttodos') # редирект на страницу currenttodos
+        except ValueError:  # если возникла ошибка неправильных данных ValueError
+            return render (request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Bad data passed in. Try again'})
+
+
 
 def currenttodos(request):      #отобразится страница с текущими todos
     return render (request, 'todo/currenttodos.html') #отобразится страница с запросом имени и паролей

@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p11 lesson 6.10"
+git commit -m "befor p12 lesson 6.11 Function Create todo`s in db."
 git push -u origin main
 
 pip freeze - installed Package
@@ -218,7 +218,7 @@ path('login/', views.loginuser, name='loginuser'),
     {% endblock %}
 
 10)commit befor p10 lesson 6.9
-Создадим модель записи Todo, для того добавим в файл todo/models.py:
+Создадим модель записи Todo в dbDjango, для того добавим в файл todo/models.py:
 from django.contrib.auth.models import User #для внесения в модель ID пользователя-создателя
 
 class Todo(models.Model):
@@ -240,9 +240,54 @@ python manage.py migrate
 from .models import Todo
 admin.site.register(Todo)
 
-для отображения только для чтения created(автозаполнение текущим временем) добавим в файл todo/admin.py
+для отображения (только для чтения) created(автозаполнение текущим временем) добавим в файл todo/admin.py
 class TodoAdmin(admin.ModelAdmin):
     readonly_fields = ('created',)
 
-admin.site.register(Todo, TodoAdmin)
+admin.site.register(Todo, TodoAdmin) # отбражает записи TODO в админке + (, TodoAdmin) для отображения (только для чтения) created(автозаполнение текущим временем)
 11) befor p11 lesson 6.10
+  Функционал создания записей todo.
+в файл todowoo/urls.py add:
+    path('create/', views.createtodo, name='createtodo'),
+в файл todo/views.py допишем:
+    from .forms import TodoForm  # импорт формы страницы создания записей из файла todo/forms.py
+    def createtodo(request):
+        if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+            return render (request, 'todo/createtodo.html', {'form':TodoForm()}) #отобразится страница с формой TodoForm() описанной в файле todo/forms.py
+        else:
+            try:
+                form = TodoForm(request.POST) #все заполнные данные в форме TodoForm
+                newtodo = form.save(commit=False)   # записываются в dbDjango
+                newtodo.user = request.user     # выполняется привязка данных к пользователю
+                newtodo.save()  # и тоже записываются в dbDjango
+                return redirect('currenttodos') # редирект на страницу currenttodos
+            except ValueError:  # если возникла ошибка неправильных данных ValueError
+                return render (request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Bad data passed in. Try again'})
+
+создадим файл todo/TEMPLATES/todo/createtodo.html:
+      {% extends 'todo/base.html' %}
+
+      {% block content %}
+
+        <h1>Create</h1>
+
+        <!-- # вывод ошибки, если есть  -->
+        <h2>{{ error }}</h2>
+
+        <form  method="POST">
+          {% csrf_token %}
+        {{ form.as_p }}    <!-- # форма djngo (ввод записей ТуДу) задается в views.py при вызове страницы в данном случае TodoForm(создана нами)   -->
+        <button type="submit">Create</button>
+        </form>
+
+        {% endblock %}
+
+
+создадим файл todo/forms.py: для формы записей todos
+    from django.forms import ModelForm
+    from .models import Todo  # импортируем класс Todo из models.py
+
+    class TodoForm(ModelForm):
+        class Meta:
+            model = Todo
+            fields = ['title', 'memo', 'important']     # это те поля из models.py класса Todo, которые нам нужно заполнять.

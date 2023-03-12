@@ -10,7 +10,7 @@
 
   <form  method="POST">
     {% csrf_token %}
-  {{ form.as_p }}    <!-- # форма djngo для запроса username и двух паролей   -->
+  {{ form.as_p }}    <!-- # форма djngo для запроса username и пароля, форма djngo задается в views.py при вызове страницы в данном случае AuthenticationForm()(стандартная джанго)  -->
   <button type="submit">Login</button>
   </form>
 
