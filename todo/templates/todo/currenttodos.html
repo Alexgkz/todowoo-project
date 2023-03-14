@@ -3,6 +3,18 @@
 
 {% block content %}
 
-  Current
+<ul>
+  {% for todo in todos %}
+  <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py), если important то жирным + описание(models.memo) -->
+   <li>
+      {% if todo.important %}<b>{% endif %}
+        {{ todo.title}}
+      {% if todo.important %}</b>{% endif %}
+      {% if todo.memo %}
+        - {{ todo.memo }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
 
 {% endblock %}

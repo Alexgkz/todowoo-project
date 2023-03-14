@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError   #для  сообщ об ошибке login уже занят
 from django.contrib.auth import login, logout, authenticate   #
 from .forms import TodoForm  # импорт формы страницы создания записей из файла todo/forms.py
+from .models import Todo  # импорт модели Todo из файла todo/models.py
 
 def home(request):
     return render (request, 'todo/home.html')
@@ -56,5 +57,6 @@ def createtodo(request):
 
 
 
-def currenttodos(request):      #отобразится страница с текущими todos
-    return render (request, 'todo/currenttodos.html') #отобразится страница с запросом имени и паролей
+def currenttodos(request):          #отобразится страница с текущими todos
+        todos = Todo.objects.filter(user=request.user, datacompleted__isnull=True)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода законченных todo(datacompleted__isnull=True)
+        return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера

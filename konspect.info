@@ -291,3 +291,42 @@ admin.site.register(Todo, TodoAdmin) # отбражает записи TODO в �
         class Meta:
             model = Todo
             fields = ['title', 'memo', 'important']     # это те поля из models.py класса Todo, которые нам нужно заполнять.
+
+12) befor p12 lesson 6.11
+Вывод список задач.
+в файл todo/views.py допишем:
+      from .models import Todo  # импорт модели Todo из файла todo/models.py
+      def currenttodos(request):          #отобразится страница с текущими todos
+          todos = Todo.objects.filter(user=request.user)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)
+          return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера
+
+
+добавим в файл todo/TEMPLATES/todo/currenttodos.html:
+
+    <!-- # show base.html with Code in Tag 'Block content' -->
+    {% extends 'todo/base.html' %}
+
+    {% block content %}
+
+    <ul>
+
+      {% for todo in todos %}
+      <li>{{ todo.title}}</li> <!-- #вывод поочереди всех заголовков из todos(создано в views.py) -->
+      {% endfor %}
+    </ul>
+
+    {% endblock %}
+
+            для исключения вывода законченных todo(datecompleted_isnull=True) внесем изменения в views.py:
+                def currenttodos(request):          #отобразится страница с текущими todos
+                    todos = Todo.objects.filter(user=request.user, datecompleted__isnull=True)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user) @ исключения вывода законченных todo(datecompleted__isnull=True)
+
+Выделим Important todos жирным шрифтом файл todo/TEMPLATES/todo/currenttodos.html:
+<li>{% if todo.important %}<b>{% endif %}{{ todo.title}}{% if todo.important %}</b>{% endif %}</li>
+Добавим описание заголовка в views.py в тег li предыдущей строки
+<!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py), если important то жирным + описание(models.memo) -->
+     <li>
+        {% if todo.important %}<b>{% endif %}{{ todo.title}}
+        {% if todo.important %}</b>{% endif %}
+        {% if todo.memo %} - {{ todo.memo }}{% endif %}
+      </li>
