@@ -5,6 +5,7 @@ from django.db import IntegrityError   #для  сообщ об ошибке log
 from django.contrib.auth import login, logout, authenticate   #
 from .forms import TodoForm  # импорт формы страницы создания записей из файла todo/forms.py
 from .models import Todo  # импорт модели Todo из файла todo/models.py
+from django.utils import timezone
 
 def home(request):
     return render (request, 'todo/home.html')
@@ -73,3 +74,16 @@ def viewtodo(request, todo_pk):          #отобразится страниц�
                 return redirect('currenttodos') # редирект на страницу currenttodos
             except ValueError:  # если возникла ошибка неправильных данных ValueError
                 return render (request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'Bad data passed in. Try again'})
+
+def completetodo(request, todo_pk):          #завершение дел., todo_pk-ключ записи для просмотра
+        todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
+        if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
+            todo.datacompleted = timezone.now() #заполнение дата/время завершения, что и есть условие завершения
+            todo.save()
+            return redirect('currenttodos') # редирект на страницу currenttodos
+
+def deletetodo(request, todo_pk):          #удаление дел., todo_pk-ключ записи для просмотра
+        todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
+        if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
+            todo.delete()
+            return redirect('currenttodos') # редирект на страницу currenttodos

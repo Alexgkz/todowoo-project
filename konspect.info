@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p13.1 lesson 6.12 make deny access to todo, if  it made no current user"
+git commit -m "befor p15 lesson 6.13 Made Completing and deleting of todo"
 git push -u origin main
 
 pip freeze - installed Package
@@ -415,3 +415,39 @@ def viewtodo(request, todo_pk):          #отобразится страниц�
           todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), user=request.user нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить запросом через строку браузера была ошибка 404
 
 14) befor p14 lesson 6.13 maked deny access to 'todo', if  it maked no current user
+Complete and delete todo
+add in file todowoo/urls.py:
+  path('todo/<int:todo_pk>/complete', views.completetodo, name='completetodo'),
+edit todo/views.py
+  from django.utils import timezone
+  def completetodo(request, todo_pk):          #отобразится страница завершения дел., todo_pk-ключ записи для просмотра
+          todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
+          if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
+              todo.datacompleted = timezone.now() #заполнение дата/время завершения, что и есть условие завершения
+              todo.save()
+              return redirect('currenttodos') # редирект на страницу currenttodos
+
+add in todo/TEMPLATES/todo/viewtodo.html: after show form
+
+<form method="POST" action="{% url 'completetodo' todo.id %}">    <!-- #вывод и действие кнопки Complete -->
+  {% csrf_token %}
+  <button type="submit">Complete</button>
+</form>
+
+Теперь добавляем кнопку Delete:
+add in todo/TEMPLATES/todo/viewtodo.html: after button Save
+    <form method="POST" action="{% url 'deletetodo' todo.id %}">    <!-- #вывод и действие кнопки Complete -->
+        {% csrf_token %}
+      <button type="submit">Delete</button>
+    </form>
+add in file todowoo/urls.py:
+    path('todo/<int:todo_pk>/delete', views.deletetodo, name='deletetodo'),
+
+add todo/views.py:
+    def deletetodo(request, todo_pk):          #удаление дел., todo_pk-ключ записи для просмотра
+            todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
+            if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
+                todo.delete()
+                return redirect('currenttodos') # редирект на страницу currenttodos
+
+15) befor p15 lesson 6.13 Made Completing and deleting of todo
