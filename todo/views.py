@@ -62,6 +62,10 @@ def currenttodos(request):          #отобразится страница с 
         todos = Todo.objects.filter(user=request.user, datacompleted__isnull=True)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода законченных todo(datacompleted__isnull=True)
         return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера
 
+def completedtodos(request):          #отобразится страница с выполнеными todos
+        todos = Todo.objects.filter(user=request.user, datacompleted__isnull=False).order_by('-datacompleted')      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода НЕзаконченных todo(datacompleted__isnull=False), .order_by('-datacompleted') sorted by datacompleted 
+        return render (request, 'todo/completedtodos.html', {'todos':todos}) #отобразится страница completedtodos.html и ей передаются  данные объектов модели Todo для текущего юзера
+
 def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
         todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить запросом через строку браузера была ошибка 404
         if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)

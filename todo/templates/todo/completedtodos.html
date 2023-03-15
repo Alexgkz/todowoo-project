@@ -1,0 +1,23 @@
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
+
+{% block content %}
+Completed
+<ul>
+  {% for todo in todos %}
+
+   <li>
+     <a href="{% url 'viewtodo' todo.id %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+        {% if todo.important %}<b>{% endif %}       <!-- #если important то жирным шрифтом  -->
+          {{ todo.title}}                          <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
+        {% if todo.important %}</b>{% endif %}
+        {% if todo.memo %}
+          - {{ todo.memo }}                         <!-- #если есть описание то оно выводится  -->
+        {% endif %}
+        {{ todo.datacompleted|date:'M j Y H:i' }} <!--  show completed date/time   -->
+    </a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p15 lesson 6.13 Made Completing and deleting of todo"
+git commit -m "16) before p16 lesson 6.14 Made view completed todos"
 git push -u origin main
 
 pip freeze - installed Package
@@ -450,4 +450,37 @@ add todo/views.py:
                 todo.delete()
                 return redirect('currenttodos') # редирект на страницу currenttodos
 
-15) befor p15 lesson 6.13 Made Completing and deleting of todo
+15) befor p15 lesson 6.14 Made Completing and deleting of todo
+view completed todos
+add in file todowoo/urls.py:
+    path('completed/', views.completedtodos, name='currenttodos'),
+add todo/views.py:
+    def completedtodos(request):          #отобразится страница с выполнеными todos
+            todos = Todo.objects.filter(user=request.user, datacompleted__isnull=False).order_by('-datacompleted')      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода НЕзаконченных todo(datacompleted__isnull=False), .order_by('-datacompleted') sorted by datacompleted
+            return render (request, 'todo/completedtodos.html', {'todos':todos}) #отобразится страница completedtodos.html и ей передаются  данные объектов модели Todo для текущего юзера
+new file todo/templates/todo/completedtodos.html:
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
+
+{% block content %}
+Completed
+<ul>
+  {% for todo in todos %}
+
+   <li>
+     <a href="{% url 'viewtodo' todo.id %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+        {% if todo.important %}<b>{% endif %}       <!-- #если important то жирным шрифтом  -->
+          {{ todo.title}}                          <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
+        {% if todo.important %}</b>{% endif %}
+        {% if todo.memo %}
+          - {{ todo.memo }}                         <!-- #если есть описание то оно выводится  -->
+        {% endif %}
+        {{ todo.datacompleted|date:'M j Y H:i' }} # show completed date/time
+    </a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+
+16) befor p16 lesson 6.14 Made view completed todos
