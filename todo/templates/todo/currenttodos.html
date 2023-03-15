@@ -5,14 +5,16 @@
 
 <ul>
   {% for todo in todos %}
-  <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py), если important то жирным + описание(models.memo) -->
+
    <li>
-      {% if todo.important %}<b>{% endif %}
-        {{ todo.title}}
-      {% if todo.important %}</b>{% endif %}
-      {% if todo.memo %}
-        - {{ todo.memo }}
-      {% endif %}
+     <a href="{% url 'viewtodo' todo.id %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+        {% if todo.important %}<b>{% endif %}       <!-- #если important то жирным шрифтом  -->
+          {{ todo.title}}                          <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
+        {% if todo.important %}</b>{% endif %}
+        {% if todo.memo %}
+          - {{ todo.memo }}                         <!-- #если есть описание то оно выводится  -->
+        {% endif %}
+    </a>
     </li>
   {% endfor %}
 </ul>

@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p12 lesson 6.11 Function Create todo`s in db."
+git commit -m "befor p13 lesson 6.12"
 git push -u origin main
 
 pip freeze - installed Package
@@ -330,3 +330,81 @@ admin.site.register(Todo, TodoAdmin) # отбражает записи TODO в �
         {% if todo.important %}</b>{% endif %}
         {% if todo.memo %} - {{ todo.memo }}{% endif %}
       </li>
+13) befor p13 lesson 6.12 "Сделаем список дел кликабельным, для просмотра и изменения дел
+в файл todowoo/urls.py add:
+    path('todo/<int:todo_pk>', views.viewtodo, name='viewtodo'),
+
+в файл todo/views.py допишем:
+      from django.shortcuts import render, redirect, get_object_or_404
+
+      def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
+              todo = get_object_or_404(Todo, pk=todo_pk)      #функция получения объекта(записи здесь)
+              return render(request, 'todo/viewtodo.html', {'todo':todo}) # отображение записи
+
+
+добавим в файл todo/TEMPLATES/todo/currenttodos.html для кликабельности заголовков:
+<a href="{% url 'viewtodo' todo.id %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+</a>
+
+для редактирования дел:
+изменим файл todo/views.py, чтобы вместе с заголовком выводилась заполнная форма записи для редактирования:
+    def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
+            todo = get_object_or_404(Todo, pk=todo_pk)      #функция получения объекта(записи здесь)
+            form = TodoForm(instance=todo) #формирование  формы записи
+            return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form}) # отображение записи
+
+
+edit файл todo/TEMPLATES/todo/currenttodos.html:
+    <!-- # show base.html with Code in Tag 'Block content' -->
+    {% extends 'todo/base.html' %}
+
+    {% block content %}
+
+    <ul>
+      {% for todo in todos %}
+
+       <li>
+         <a href="{% url 'viewtodo' {{ todo.id }} %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+            {% if todo.important %}<b>{% endif %}       <!-- #если important то жирным шрифтом  -->
+              {{ todo.title}}                          <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
+            {% if todo.important %}</b>{% endif %}
+            {% if todo.memo %}
+              - {{ todo.memo }}                         <!-- #если есть описание то оно выводится  -->
+            {% endif %}
+        </a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    создадим файл todo/TEMPLATES/todo/viewtodo.html:
+    <!-- # show base.html with Code in Tag 'Block content' -->
+    {% extends 'todo/base.html' %}
+
+    {% block content %}
+
+    {{ error }}
+
+      {{ todo.title }}        <!-- #вывод заголовка -->
+
+      <form method="POST">    <!-- #вывод формы -->
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+      </form>
+
+    {% endblock %}
+
+edit todo/views, срабатывания кнопки Save, метод POST:
+
+def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
+        todo = get_object_or_404(Todo, pk=todo_pk)      #функция получения объекта(записи здесь)
+        if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+            form = TodoForm(instance=todo)
+            return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form}) # отображение записи
+        else:   #срабатывания кнопки Save, метод POST
+            try:
+                form = TodoForm(request.POST, instance=todo) #все заполнные данные в форме TodoForm, "instance=todo" нужно чтобы показать, что надпись уже была создана и мы ее редактируем
+                form.save()  # и тоже записываются в dbDjango
+                return redirect('currenttodos') # редирект на страницу currenttodos
+            except ValueError:  # если возникла ошибка неправильных данных ValueError
+                return render (request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'Bad data passed in. Try again'})

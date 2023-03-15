@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError   #для  сообщ об ошибке login уже занят
@@ -60,3 +60,16 @@ def createtodo(request):
 def currenttodos(request):          #отобразится страница с текущими todos
         todos = Todo.objects.filter(user=request.user, datacompleted__isnull=True)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода законченных todo(datacompleted__isnull=True)
         return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера
+
+def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
+        todo = get_object_or_404(Todo, pk=todo_pk)      #функция получения объекта(записи здесь)
+        if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
+            form = TodoForm(instance=todo)
+            return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form}) # отображение записи
+        else:
+            try:
+                form = TodoForm(request.POST, instance=todo) #все заполнные данные в форме TodoForm, "instance=todo" нужно чтобы показать, что надпись уже была создана и мы ее редактируем
+                form.save()  # и тоже записываются в dbDjango
+                return redirect('currenttodos') # редирект на страницу currenttodos
+            except ValueError:  # если возникла ошибка неправильных данных ValueError
+                return render (request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'Bad data passed in. Try again'})

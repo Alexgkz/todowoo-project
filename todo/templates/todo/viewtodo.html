@@ -1,0 +1,16 @@
+<!-- # show base.html with Code in Tag 'Block content' -->
+{% extends 'todo/base.html' %}
+
+{% block content %}
+
+{{ error }}
+
+  {{ todo.title }}        <!-- #вывод заголовка -->
+
+  <form method="POST">    <!-- #вывод формы -->
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+  </form>
+
+{% endblock %}
