@@ -62,7 +62,7 @@ def currenttodos(request):          #отобразится страница с 
         return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера
 
 def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
-        todo = get_object_or_404(Todo, pk=todo_pk)      #функция получения объекта(записи здесь)
+        todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить запросом через строку браузера была ошибка 404
         if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
             form = TodoForm(instance=todo)
             return render(request, 'todo/viewtodo.html', {'todo':todo, 'form':form}) # отображение записи

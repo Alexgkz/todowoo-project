@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p13 lesson 6.12"
+git commit -m "befor p13.1 lesson 6.12 make deny access to todo, if  it made no current user"
 git push -u origin main
 
 pip freeze - installed Package
@@ -408,3 +408,10 @@ def viewtodo(request, todo_pk):          #отобразится страниц�
                 return redirect('currenttodos') # редирект на страницу currenttodos
             except ValueError:  # если возникла ошибка неправильных данных ValueError
                 return render (request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'Bad data passed in. Try again'})
+
+13.1)befor p13.1 lesson 6.12 make deny access to 'todo', if  it made no current user
+  edit todo/views:
+  def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
+          todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), user=request.user нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить запросом через строку браузера была ошибка 404
+
+14) befor p14 lesson 6.13 maked deny access to 'todo', if  it maked no current user
