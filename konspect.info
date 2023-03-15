@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "16) before p16 lesson 6.14 Made view completed todos"
+git commit -m "befor p17 lesson 6.15 add buttons 'Create', 'Current', 'Completed' in UP_bar base.html, access to some page only registred user, for right show autodirect to /login if user not registred"
 git push -u origin main
 
 pip freeze - installed Package
@@ -453,7 +453,7 @@ add todo/views.py:
 15) befor p15 lesson 6.14 Made Completing and deleting of todo
 view completed todos
 add in file todowoo/urls.py:
-    path('completed/', views.completedtodos, name='currenttodos'),
+    path('completed/', views.completedtodos, name='completedtodos'),
 add todo/views.py:
     def completedtodos(request):          #отобразится страница с выполнеными todos
             todos = Todo.objects.filter(user=request.user, datacompleted__isnull=False).order_by('-datacompleted')      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода НЕзаконченных todo(datacompleted__isnull=False), .order_by('-datacompleted') sorted by datacompleted
@@ -484,3 +484,20 @@ Completed
 {% endblock %}
 
 16) befor p16 lesson 6.14 Made view completed todos
+add buttons 'Create', 'Current', 'Completed' in UP_bar base.html
+in UP_bar base.html:
+    <!-- add buttons 'Create', 'Current', 'Completed' -->
+    <a href="{% url 'createtodo' %}">Create</a>
+    <a href="{% url 'currenttodos' %}">Current</a>
+    <a href="{% url 'completedtodos' %}">Completed</a>
+
+access to some page only registred user
+add in file todo/views.py:
+  from django.contrib.auth.decorators import login_required
+and mark needed methods of views.py  decorator @login_required
+
+for right show autodirect to /login if user not registred:
+add todowo/settings.py:
+LOGIN_URL = '/login'
+
+17)befor p17 lesson 6.15 add buttons 'Create', 'Current', 'Completed' in UP_bar base.html, access to some page only registred user, for right show autodirect to /login if user not registred

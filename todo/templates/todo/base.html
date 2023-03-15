@@ -2,6 +2,10 @@
 {% if user.is_authenticated %}
 <!-- # вывод имени юзера -->
 Logged In as {{ user.username }}
+<!-- add buttons 'Create', 'Current', 'Completed' -->
+<a href="{% url 'createtodo' %}">Create</a>
+<a href="{% url 'currenttodos' %}">Current</a>
+<a href="{% url 'completedtodos' %}">Completed</a>
 <!-- # кнопка разлогинивания -->
 <form action="{% url 'logoutuser' %}" method="POST">
   {% csrf_token %}

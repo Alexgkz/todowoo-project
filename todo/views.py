@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout, authenticate   #
 from .forms import TodoForm  # импорт формы страницы создания записей из файла todo/forms.py
 from .models import Todo  # импорт модели Todo из файла todo/models.py
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render (request, 'todo/home.html')
@@ -38,11 +39,13 @@ def signupuser(request):        #страница с запросом имени
         else:
             return render (request, 'todo/signupuser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})  #вывод страницы регистрации с сообщ об ошибке пароли не совпадают
 
+@login_required #access to this page only registred user
 def logoutuser(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
 
+@login_required #access to this page only registred user
 def createtodo(request):
     if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
         return render (request, 'todo/createtodo.html', {'form':TodoForm()}) #отобразится страница с формой TodoForm() описанной в файле todo/forms.py
@@ -57,15 +60,17 @@ def createtodo(request):
             return render (request, 'todo/createtodo.html', {'form':TodoForm(), 'error':'Bad data passed in. Try again'})
 
 
-
+@login_required #access to this page only registred user
 def currenttodos(request):          #отобразится страница с текущими todos
         todos = Todo.objects.filter(user=request.user, datacompleted__isnull=True)      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода законченных todo(datacompleted__isnull=True)
         return render (request, 'todo/currenttodos.html', {'todos':todos}) #отобразится страница currenttodos.html и ей передаются  данные объектов модели Todo для текущего юзера
 
+@login_required #access to this page only registred user
 def completedtodos(request):          #отобразится страница с выполнеными todos
-        todos = Todo.objects.filter(user=request.user, datacompleted__isnull=False).order_by('-datacompleted')      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода НЕзаконченных todo(datacompleted__isnull=False), .order_by('-datacompleted') sorted by datacompleted 
+        todos = Todo.objects.filter(user=request.user, datacompleted__isnull=False).order_by('-datacompleted')      #передаются  данные объектов модели Todo для текущего юзера (user=request.user)@ исключения вывода НЕзаконченных todo(datacompleted__isnull=False), .order_by('-datacompleted') sorted by datacompleted
         return render (request, 'todo/completedtodos.html', {'todos':todos}) #отобразится страница completedtodos.html и ей передаются  данные объектов модели Todo для текущего юзера
 
+@login_required #access to this page only registred user
 def viewtodo(request, todo_pk):          #отобразится страница с просмотра и изм дел., todo_pk-ключ записи для просмотра
         todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить запросом через строку браузера была ошибка 404
         if request.method == 'GET':         #при вызове через метод 'GET' (через urls.py  или строку в браузере)
@@ -78,7 +83,7 @@ def viewtodo(request, todo_pk):          #отобразится страниц�
                 return redirect('currenttodos') # редирект на страницу currenttodos
             except ValueError:  # если возникла ошибка неправильных данных ValueError
                 return render (request, 'todo/viewtodo.html', {'todo':todo, 'form':form, 'error':'Bad data passed in. Try again'})
-
+@login_required #access to this page only registred user
 def completetodo(request, todo_pk):          #завершение дел., todo_pk-ключ записи для просмотра
         todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
         if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
@@ -86,6 +91,7 @@ def completetodo(request, todo_pk):          #завершение дел., todo
             todo.save()
             return redirect('currenttodos') # редирект на страницу currenttodos
 
+@login_required #access to this page only registred user
 def deletetodo(request, todo_pk):          #удаление дел., todo_pk-ключ записи для просмотра
         todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)      #функция получения объекта(записи здесь), 'user=request.user' нужна для того чтобы если запись создана не текущим пользователем и он хочет эту запись отобразить/завершить запросом через строку браузера была ошибка 404
         if request.method == 'POST':         #при вызове через метод 'POST' (через кнопку)
