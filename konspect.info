@@ -3,7 +3,7 @@ todowoo-venv\Scripts\activate.bat
 python manage.py runserver
 
 git add -A
-git commit -m "befor p17 lesson 6.15 add buttons 'Create', 'Current', 'Completed' in UP_bar base.html, access to some page only registred user, for right show autodirect to /login if user not registred"
+git commit -m "decorating with Bootstrap, Finish"
 git push -u origin main
 
 pip freeze - installed Package
@@ -501,3 +501,7 @@ add todowo/settings.py:
 LOGIN_URL = '/login'
 
 17)befor p17 lesson 6.15 add buttons 'Create', 'Current', 'Completed' in UP_bar base.html, access to some page only registred user, for right show autodirect to /login if user not registred
+decoration
+заменил файлы на другие с использ bootstrap
+
+Finish

@@ -1,22 +1,35 @@
-<!-- # show base.html with Code in Tag 'Block content' -->
-{% extends 'todo/base.html' %}
+{% extends "todo/base.html" %}  <!-- # show base.html with Code in Tag 'Block content' -->
 
 {% block content %}
-Current
-<ul>
-  {% for todo in todos %}
-
-   <li>
-     <a href="{% url 'viewtodo' todo.id %}"> <!-- тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
-        {% if todo.important %}<b>{% endif %}       <!-- #если important то жирным шрифтом  -->
-          {{ todo.title}}                          <!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
-        {% if todo.important %}</b>{% endif %}
-        {% if todo.memo %}
-          - {{ todo.memo }}                         <!-- #если есть описание то оно выводится  -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            {% if todos %}
+                 <h1>{{ todos.count }} Current Todo{{ todos.count|pluralize }}</h1>     <!-- # show count todos -->
+            {% else %}
+                           <h1>Current Todos</h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+        {% if todos %}
+            <div class="list-group">
+                {% for todo in todos %}
+                <!-- #тег "a" href=" делает строку гиперссылкой при клике на которую происходит переход на viewtodo и передается todo.id этой записи  -->
+                    	<a href="{% url 'viewtodo' todo.id %}" class="list-group-item list-group-item-action {% if todo.important %} list-group-item-danger{% endif %}">		<!-- #если important то выделено  красным -->
+				                    <b>{{ todo.title }}</b>							<!-- #вывод поочереди всех заголовков(title) из todos(создано в views.py)  -->
+				                    {% if todo.memo %} - {{ todo.memo|truncatechars:30 }}{% endif %}	 <!-- #если есть описание то оно выводится  -->
+			                </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center">
+                <h2>Looks like you don't have any todos! Nice work.</h2>
+                <h2>Похоже, у вас нет задач! Приятной работы.</h2>
+            <br>
+            <a role="button" class="btn btn-primary" href="{% url 'createtodo' %}">New Todo</a>
+            </div>
         {% endif %}
-    </a>
-    </li>
-  {% endfor %}
-</ul>
-
+        </div>
+    </div>
 {% endblock %}
